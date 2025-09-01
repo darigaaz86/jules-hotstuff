@@ -52,6 +52,8 @@ type ExperimentConfig struct {
 	Crypto string
 	// LeaderRotation is the name of the leader rotation algorithm to use.
 	LeaderRotation string
+	// Blockchain is the name of the blockchain implementation to use.
+	Blockchain string
 	// Modules is a list of additional modules to load.
 	Modules []string
 	// Metrics is a list of metrics to log.
@@ -235,6 +237,7 @@ func (c *ExperimentConfig) CreateReplicaOpts() *orchestrationpb.ReplicaOpts {
 		Consensus:         c.Consensus,
 		Crypto:            c.Crypto,
 		LeaderRotation:    c.LeaderRotation,
+		Blockchain:        c.Blockchain,
 		ConnectTimeout:    durationpb.New(c.ConnectTimeout),
 		InitialTimeout:    durationpb.New(c.ViewTimeout),
 		TimeoutSamples:    c.DurationSamples,

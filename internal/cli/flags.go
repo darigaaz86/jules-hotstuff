@@ -44,6 +44,7 @@ func init() {
 	runCmd.Flags().String("consensus", "chainedhotstuff", "name of the consensus implementation")
 	runCmd.Flags().String("crypto", "ecdsa", "name of the crypto implementation")
 	runCmd.Flags().String("leader-rotation", "round-robin", "name of the leader rotation algorithm")
+	runCmd.Flags().String("blockchain", "in-memory", "name of the blockchain implementation")
 	runCmd.Flags().Int64("shared-seed", 0, "Shared random number generator seed")
 	runCmd.Flags().StringSlice("modules", nil, "Name additional modules to be loaded.")
 

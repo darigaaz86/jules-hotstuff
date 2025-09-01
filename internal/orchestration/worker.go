@@ -15,6 +15,7 @@ import (
 	"github.com/relab/hotstuff/backend"
 	"github.com/relab/hotstuff/blockchain"
 	"github.com/relab/hotstuff/client"
+	"github.com/relab/hotstuff/storage"
 	"github.com/relab/hotstuff/consensus"
 	"github.com/relab/hotstuff/consensus/byzantine"
 	"github.com/relab/hotstuff/crypto"
@@ -217,7 +218,7 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		leaderRotation,
 		sync,
 		w.metricsLogger,
-		blockchain.New(),
+		getBlockchain(opts.GetBlockchain(), opts.GetID()),
 		logger,
 	)
 	builder.Options().SetSharedRandomSeed(opts.GetSharedSeed())
@@ -248,6 +249,17 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		},
 	}
 	return replica.New(c, builder), nil
+}
+
+func getBlockchain(name string, id uint32) modules.BlockChain {
+	switch name {
+	case "mdbx":
+		return storage.NewMDBX(id)
+	case "in-memory":
+		fallthrough
+	default:
+		return blockchain.New()
+	}
 }
 
 // createTree creates a tree based on the given replica options.
