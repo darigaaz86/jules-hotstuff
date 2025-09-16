@@ -12,7 +12,6 @@ import (
 	"github.com/relab/hotstuff/modules"
 
 	"github.com/relab/hotstuff"
-	"github.com/relab/hotstuff/blockchain"
 	"github.com/relab/hotstuff/crypto"
 	"github.com/relab/hotstuff/crypto/bls12"
 	"github.com/relab/hotstuff/crypto/ecdsa"
@@ -26,8 +25,18 @@ import (
 )
 
 // TestModules registers default modules for testing to the given builder.
-func TestModules(t *testing.T, ctrl *gomock.Controller, id hotstuff.ID, _ hotstuff.PrivateKey, builder *modules.Builder) {
+func TestModules(t *testing.T, ctrl *gomock.Controller, id hotstuff.ID, _ hotstuff.PrivateKey, builder *modules.Builder, bcFactory func() modules.BlockChain) {
 	t.Helper()
+
+	if bcFactory == nil {
+		bcFactory = func() modules.BlockChain {
+			blockchain := mocks.NewMockBlockChain(ctrl)
+			blockchain.EXPECT().Store(gomock.Any()).AnyTimes()
+			blockchain.EXPECT().Get(gomock.Any()).AnyTimes().Return(hotstuff.GetGenesis(), true)
+			blockchain.EXPECT().LocalGet(gomock.Any()).AnyTimes().Return(hotstuff.GetGenesis(), true)
+			return blockchain
+		}
+	}
 
 	acceptor := mocks.NewMockAcceptor(ctrl)
 	acceptor.EXPECT().Accept(gomock.AssignableToTypeOf(hotstuff.Command(""))).AnyTimes().Return(true)
@@ -49,10 +58,15 @@ func TestModules(t *testing.T, ctrl *gomock.Controller, id hotstuff.ID, _ hotstu
 
 	synchronizer := mocks.NewMockSynchronizer(ctrl)
 	synchronizer.EXPECT().Start(gomock.Any()).AnyTimes()
+	blockchain := mocks.NewMockBlockChain(ctrl)
+	blockchain.EXPECT().Store(gomock.Any()).AnyTimes()
+	blockchain.EXPECT().Get(gomock.Any()).AnyTimes().Return(hotstuff.GetGenesis(), true)
+	blockchain.EXPECT().LocalGet(gomock.Any()).AnyTimes().Return(hotstuff.GetGenesis(), true)
+
 	builder.Add(
 		eventloop.New(100),
 		logging.New(fmt.Sprintf("hs%d", id)),
-		blockchain.New(),
+		blockchain,
 		mocks.NewMockConsensus(ctrl),
 		consensus.NewVotingMachine(),
 		leaderrotation.NewFixed(1),
@@ -126,7 +140,7 @@ func CreateBuilders(t *testing.T, ctrl *gomock.Controller, n int, keys ...hotstu
 
 		builder := network.GetNodeBuilder(twins.NodeID{ReplicaID: id, NetworkID: uint32(id)}, key)
 		builder.Add(network.NewConfiguration())
-		TestModules(t, ctrl, id, key, &builder)
+		TestModules(t, ctrl, id, key, &builder, nil)
 		builder.Add(network.NewConfiguration())
 		builders[i] = &builder
 	}

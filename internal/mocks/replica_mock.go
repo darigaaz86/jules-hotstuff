@@ -10,7 +10,6 @@
 package mocks
 
 import (
-	crypto "crypto"
 	reflect "reflect"
 
 	hotstuff "github.com/relab/hotstuff"
@@ -82,10 +81,10 @@ func (mr *MockReplicaMockRecorder) NewView(arg0 any) *gomock.Call {
 }
 
 // PublicKey mocks base method.
-func (m *MockReplica) PublicKey() crypto.PublicKey {
+func (m *MockReplica) PublicKey() hotstuff.PublicKey {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PublicKey")
-	ret0, _ := ret[0].(crypto.PublicKey)
+	ret0, _ := ret[0].(hotstuff.PublicKey)
 	return ret0
 }
 

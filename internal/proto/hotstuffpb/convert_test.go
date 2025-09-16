@@ -20,7 +20,7 @@ func TestConvertPartialCert(t *testing.T) {
 
 	key := testutil.GenerateECDSAKey(t)
 	builder := modules.NewBuilder(1, key)
-	testutil.TestModules(t, ctrl, 1, key, &builder)
+	testutil.TestModules(t, ctrl, 1, key, &builder, nil)
 	hs := builder.Build()
 
 	var signer modules.Crypto

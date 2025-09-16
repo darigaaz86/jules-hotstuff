@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/relab/hotstuff"
-	"github.com/relab/hotstuff/blockchain"
 	"github.com/relab/hotstuff/consensus"
 	"github.com/relab/hotstuff/crypto"
 	"github.com/relab/hotstuff/crypto/ecdsa"
@@ -120,7 +119,7 @@ func (n *Network) GetNodeBuilder(id NodeID, pk hotstuff.PrivateKey) modules.Buil
 	return builder
 }
 
-func (n *Network) createTwinsNodes(nodes []NodeID, _ Scenario, consensusName string) error {
+func (n *Network) createTwinsNodes(nodes []NodeID, _ Scenario, consensusName string, bcFactory func() modules.BlockChain) error {
 	cg := &commandGenerator{}
 	for _, nodeID := range nodes {
 
@@ -139,7 +138,7 @@ func (n *Network) createTwinsNodes(nodes []NodeID, _ Scenario, consensusName str
 		}
 		builder.Add(
 			eventloop.New(100),
-			blockchain.New(),
+			bcFactory(),
 			consensus.New(consensusModule),
 			consensus.NewVotingMachine(),
 			crypto.NewCache(ecdsa.New(), 100),

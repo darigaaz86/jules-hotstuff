@@ -64,6 +64,8 @@ type ForkHandlerExt interface {
 	Fork(block *hotstuff.Block)
 }
 
+//go:generate mockgen -destination=../internal/mocks/blockchain_mock.go -package=mocks . BlockChain
+
 // BlockChain is a datastructure that stores a chain of blocks.
 // It is not required that a block is stored forever,
 // but a block must be stored until at least one of its children have been committed.

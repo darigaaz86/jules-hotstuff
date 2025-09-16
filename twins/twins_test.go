@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/relab/hotstuff/blockchain"
 	_ "github.com/relab/hotstuff/consensus/chainedhotstuff"
 	"github.com/relab/hotstuff/logging"
 	"github.com/relab/hotstuff/twins"
@@ -31,7 +32,7 @@ func TestTwins(t *testing.T) {
 		if err != nil {
 			break
 		}
-		result, err := twins.ExecuteScenario(s, numNodes, numTwins, 100, "chainedhotstuff")
+		result, err := twins.ExecuteScenario(s, numNodes, numTwins, 100, "chainedhotstuff", blockchain.New)
 		if err != nil {
 			t.Fatal(err)
 		}

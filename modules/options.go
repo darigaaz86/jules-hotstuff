@@ -37,6 +37,7 @@ type Options struct {
 
 	id         hotstuff.ID
 	privateKey hotstuff.PrivateKey
+	dbPath     string
 
 	shouldUseAggQC        bool
 	shouldVerifyVotesSync bool
@@ -91,6 +92,16 @@ func (opts *Options) ID() hotstuff.ID {
 // PrivateKey returns the private key.
 func (opts *Options) PrivateKey() hotstuff.PrivateKey {
 	return opts.privateKey
+}
+
+// DBPath returns the path to the database file.
+func (o *Options) DBPath() string {
+	return o.dbPath
+}
+
+// SetDBPath sets the path to the database file.
+func (o *Options) SetDBPath(path string) {
+	o.dbPath = path
 }
 
 // ShouldUseAggQC returns true if aggregated quorum certificates should be used.

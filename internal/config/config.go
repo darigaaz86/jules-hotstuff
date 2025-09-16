@@ -128,6 +128,8 @@ type ExperimentConfig struct {
 	ViewTimeout time.Duration
 	// MaxTimeout is the upper limit on view timeouts.
 	MaxTimeout time.Duration
+	// DBPath is the path to the database file for the mdbx backend.
+	DBPath string
 }
 
 // TreePosIDs returns a slice of hotstuff.IDs ordered by the tree positions.
@@ -244,6 +246,7 @@ func (c *ExperimentConfig) CreateReplicaOpts() *orchestrationpb.ReplicaOpts {
 		BranchFactor:      c.BranchFactor,
 		TreePositions:     c.TreePositions,
 		TreeDelta:         durationpb.New(c.TreeDelta),
+		DbPath:            c.DBPath,
 	}
 }
 

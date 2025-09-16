@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/relab/hotstuff"
+	"github.com/relab/hotstuff/modules"
 )
 
 // View specifies the leader id and the partition scenario for a single view.
@@ -46,7 +47,7 @@ type ScenarioResult struct {
 }
 
 // ExecuteScenario executes a twins scenario.
-func ExecuteScenario(scenario Scenario, numNodes, numTwins uint8, numTicks int, consensusName string) (result ScenarioResult, err error) {
+func ExecuteScenario(scenario Scenario, numNodes, numTwins uint8, numTicks int, consensusName string, bcFactory func() modules.BlockChain) (result ScenarioResult, err error) {
 	// Network simulator that blocks proposals, votes, and fetch requests between nodes that are in different partitions.
 	// Timeout and NewView messages are permitted.
 	network := NewPartitionedNetwork(scenario,
@@ -60,7 +61,7 @@ func ExecuteScenario(scenario Scenario, numNodes, numTwins uint8, numTicks int, 
 	nodes, twins := assignNodeIDs(numNodes, numTwins)
 	nodes = append(nodes, twins...)
 
-	err = network.createTwinsNodes(nodes, scenario, consensusName)
+	err = network.createTwinsNodes(nodes, scenario, consensusName, bcFactory)
 	if err != nil {
 		return ScenarioResult{}, err
 	}

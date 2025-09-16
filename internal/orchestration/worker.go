@@ -15,6 +15,7 @@ import (
 	"github.com/relab/hotstuff/backend"
 	"github.com/relab/hotstuff/blockchain"
 	"github.com/relab/hotstuff/client"
+	"github.com/relab/hotstuff/mdbx"
 	"github.com/relab/hotstuff/consensus"
 	"github.com/relab/hotstuff/consensus/byzantine"
 	"github.com/relab/hotstuff/crypto"
@@ -209,6 +210,15 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		)
 	}
 	sync := synchronizer.New(viewDuration)
+	// Select blockchain backend
+	if opts.GetDbPath() != "" {
+		dbPath := fmt.Sprintf("%s-%d", opts.GetDbPath(), opts.GetID())
+		builder.Add(mdbx.NewMDBX())
+		builder.Options().SetDBPath(dbPath)
+	} else {
+		builder.Add(blockchain.New())
+	}
+
 	builder.Add(
 		eventloop.New(1000),
 		consensus.New(consensusRules),
@@ -217,7 +227,6 @@ func (w *Worker) createReplica(opts *orchestrationpb.ReplicaOpts) (*replica.Repl
 		leaderRotation,
 		sync,
 		w.metricsLogger,
-		blockchain.New(),
 		logger,
 	)
 	builder.Options().SetSharedRandomSeed(opts.GetSharedSeed())

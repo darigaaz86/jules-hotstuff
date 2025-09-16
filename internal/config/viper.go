@@ -67,6 +67,7 @@ func NewViper() (*ExperimentConfig, error) {
 		RateStepInterval:    viper.GetDuration("rate-step-interval"),
 		ClientTimeout:       viper.GetDuration("client-timeout"),
 		UseTLS:              true,
+		DBPath:              viper.GetString("db-path"),
 	}
 
 	if len(cfg.ReplicaHosts) == 0 {

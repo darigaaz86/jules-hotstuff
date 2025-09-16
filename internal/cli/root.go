@@ -70,6 +70,9 @@ func init() {
 	cobra.CheckErr(viper.BindPFlag("log-level", rootCmd.PersistentFlags().Lookup("log-level")))
 	rootCmd.PersistentFlags().StringSlice("log-pkgs", []string{}, "set the log level on a per-package basis.")
 	cobra.CheckErr(viper.BindPFlag("log-pkgs", rootCmd.PersistentFlags().Lookup("log-pkgs")))
+
+	rootCmd.PersistentFlags().String("db-path", "", "path to the database file for the mdbx backend. If set, the mdbx backend is used.")
+	cobra.CheckErr(viper.BindPFlag("db-path", rootCmd.PersistentFlags().Lookup("db-path")))
 }
 
 // initConfig reads in config file and ENV variables if set.
